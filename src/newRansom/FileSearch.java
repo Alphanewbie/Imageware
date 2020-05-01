@@ -183,6 +183,7 @@ public class FileSearch {
 
 	}
 
+	// 목록에 있는 확장자의 파일을 전부 얻어온 다음에, 리스트화 한다.
 	public void getFileList(String source) {
 		File dir = new File(source);
 		File[] fileList = dir.listFiles();
@@ -205,6 +206,8 @@ public class FileSearch {
 			e.printStackTrace();
 		}
 	}
+
+	// 파일을 파일을 검색할 디렉토리
 	public boolean IsImportDirectory(File file) {
 		String name = file.getName();
 		ArrayList<String> importdir = new ArrayList<>();

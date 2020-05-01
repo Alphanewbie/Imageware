@@ -76,6 +76,7 @@ public class Cip implements CipInterface {
 		
 	}
 	
+	// 파일을 암호화 시킨 후 생성할 무작위 파일 이름 생성
 	public static void CreateFile(String filepath, String filename, byte[] str) {
 		new File(filepath + filename);
 		OutputStream bw;
@@ -90,6 +91,7 @@ public class Cip implements CipInterface {
 		}
 	}
 
+	// 파일을 암호화 시킨 후의 리스트
 	public void CreateListFile(String filepath) {
 		// TODO Auto-generated method stub
 		Cipher cipher;
@@ -103,14 +105,12 @@ public class Cip implements CipInterface {
 			bw = new BufferedWriter(new FileWriter(new File(filepath + "list")));
 
 			for (String key : list.keySet()) {
-
 				bw.write(key);
 				bw.newLine(); 
 				bw.write(list.get(key));
 				bw.newLine();
 			}
 			bw.close(); 
-
 		} 
 
 		catch (NoSuchAlgorithmException e1) {
