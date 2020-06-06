@@ -57,7 +57,7 @@ public class Cip implements CipInterface {
 			// 개인키
 			String KEY = "123456789abcdefg";
 			// 공개키
-			SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+			// SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(), "RSA");
 			
 			this.key = secretKeySpec; 
 			// 실행 되면 사용자의 뷰어로 보여줄 이미지 경로
@@ -377,8 +377,8 @@ public class Cip implements CipInterface {
 			FileInputStream in = new FileInputStream(inFile);
 			FileOutputStream out = new FileOutputStream(filepath + outFilename);
 			
-			
-			byte[] buffer = new byte[1024];
+			// 16 바이트씩 암호화
+			byte[] buffer = new byte[16];
             int read = -1;
             
             InputStream input = new BufferedInputStream(new FileInputStream(f));
@@ -446,7 +446,7 @@ public class Cip implements CipInterface {
 			String outFile = filepath + outFilename;
 
 			
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[16];
 			int read = -1;
 			
 			
